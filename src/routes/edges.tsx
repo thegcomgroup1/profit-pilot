@@ -19,7 +19,7 @@ export const Route = createFileRoute("/edges")({
 });
 
 function Edges() {
-  const { sport } = Route.useSearch();
+  const sport = Route.useSearch().sport ?? "NBA";
   const { data } = useSuspenseQuery(siteQuery);
   const board = data.board.filter((r) => r.Sport === sport);
   const day = latestDate(board);

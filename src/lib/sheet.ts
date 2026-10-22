@@ -59,10 +59,10 @@ export const getSiteData = createServerFn({ method: "GET" }).handler(async (): P
     ["Board", "Games", "Tickets", "Writeups", "Record NBA", "Record NFL"].map(tab),
   );
   const record = [
-    ...nba.map((r) => ({ ...r, Sport: "NBA" })),
-    ...nfl.map((r) => ({ ...r, Sport: "NFL" })),
+    ...(nba ?? []).map((r) => ({ ...r, Sport: "NBA" })),
+    ...(nfl ?? []).map((r) => ({ ...r, Sport: "NFL" })),
   ].sort((a, b) => b.Date.localeCompare(a.Date));
-  return { board, games, tickets, writeups, record };
+  return { board: board ?? [], games: games ?? [], tickets: tickets ?? [], writeups: writeups ?? [], record };
 });
 
 export const siteQuery = queryOptions({
@@ -80,6 +80,5 @@ export const fmtDay = (d: string) =>
   d ? new Date(d + "T12:00:00Z").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "UTC" }) : "";
 export const sports = ["NBA", "NFL"] as const;
 export type Sport = (typeof sports)[number];
-export const sportSearch = (s: Record<string, unknown>): { sport: Sport } => ({
-  sport: s.sport === "NFL" ? "NFL" : "NBA",
-});
+export const sportSearch = (s: Record<string, unknown>): { sport?: Sport } =>
+  s["sport"] === "NFL" ? { sport: "NFL" } : {};

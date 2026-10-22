@@ -7,7 +7,7 @@ const filters = { all: "All picks", NBA: "NBA", NFL: "NFL" } as const;
 type F = keyof typeof filters;
 
 export const Route = createFileRoute("/record")({
-  validateSearch: (s: Record<string, unknown>): { f: F } => ({ f: s.f === "NBA" || s.f === "NFL" ? s.f : "all" }),
+  validateSearch: (s: Record<string, unknown>): { f?: F } => (s["f"] === "NBA" || s["f"] === "NFL" ? { f: s["f"] } : {}),
   loader: ({ context }) => context.queryClient.ensureQueryData(siteQuery),
   head: () => ({
     meta: [
@@ -30,7 +30,7 @@ export function summarize(rows: Row[]) {
 }
 
 function Record_() {
-  const { f } = Route.useSearch();
+  const f = Route.useSearch().f ?? "all";
   const { data } = useSuspenseQuery(siteQuery);
   const rows = data.record.filter((r) => r.Result && (f === "all" || r.Sport === f));
   const s = summarize(rows);

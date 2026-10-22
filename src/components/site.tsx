@@ -15,7 +15,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-10 bg-bar text-bar-foreground">
       <div className="mx-auto flex max-w-4xl flex-wrap items-center gap-3 px-4 py-2.5">
-        <Link to="/" search={{ sport: "NBA" }} className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <img src={logo.url} alt="" className="h-8 w-8 rounded-md" />
           <span className="font-display text-lg font-semibold">Profit Pilot</span>
         </Link>
@@ -24,7 +24,6 @@ export function Header() {
             <Link
               key={n.to}
               to={n.to}
-              search={n.to === "/" || n.to === "/edges" ? { sport: "NBA" } : n.to === "/record" ? { f: "all" } : undefined}
               activeOptions={{ exact: n.to === "/" }}
               className="rounded-md px-2.5 py-2 font-mono text-xs font-semibold uppercase tracking-widest text-bar-muted data-[status=active]:bg-highlight data-[status=active]:text-bar"
             >
