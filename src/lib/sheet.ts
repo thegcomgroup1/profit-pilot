@@ -5,8 +5,9 @@ const SHEET = "1dTxC7Bbtig2GbNb9fJPOcgaSKRdfCaIEMmNJltp-qRI";
 type Known =
   | "Date" | "Sport" | "Game" | "Player" | "Team" | "Market" | "Side" | "Line" | "Price" | "Book"
   | "Projection" | "Tier" | "Type" | "Confidence" | "Note" | "Favorite" | "Spread" | "Total"
-  | "Ticket" | "Legs" | "Headline" | "Body" | "Result" | "Units" | "Actual" | "Role";
-export type Row = Record<string, string> & { [K in Known]: string };
+  | "Ticket" | "Legs" | "Headline" | "Body" | "Result" | "Units" | "Actual" | "Role"
+  | "Our %" | "Book %" | "Edge %" | "Est. odds" | "What kills it" | "Post-mortem" | "Tip ET";
+export type Row = { [K in Known]: string };
 
 export function parseCsv(text: string): Row[] {
   const rows: string[][] = [];
@@ -29,7 +30,7 @@ export function parseCsv(text: string): Row[] {
   if (!head) return [];
   return body
     .filter((r) => r.some((v) => v.trim()))
-    .map((r) => Object.fromEntries(head.map((h, i) => [h.trim(), (r[i] ?? "").trim()])));
+    .map((r) => Object.fromEntries(head.map((h, i) => [h.trim(), (r[i] ?? "").trim()])) as Row);
 }
 
 /** Sheets sometimes sends dates as serial numbers (e.g. 46315). Normalize to YYYY-MM-DD. */
@@ -71,8 +72,8 @@ export const siteQuery = queryOptions({
 });
 
 export const latestDate = (rows: Row[]) => rows.reduce((m, r) => (r.Date > m ? r.Date : m), "");
-export const pct = (v: string) => (v ? `${(Number(v) * 100).toFixed(1)}%` : "—");
-export const price = (v: string) => (!v ? "" : Number(v) > 0 ? `+${v}` : v);
+export const pct = (v?: string) => (v ? `${(Number(v) * 100).toFixed(1)}%` : "—");
+export const price = (v?: string) => (!v ? "" : Number(v) > 0 ? `+${v}` : v);
 export const slugify = (w: Row) =>
   `${w.Date}-${w.Player}-${w.Market}`.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 export const fmtDay = (d: string) =>
