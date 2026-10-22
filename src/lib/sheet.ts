@@ -2,7 +2,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 
 const SHEET = "1dTxC7Bbtig2GbNb9fJPOcgaSKRdfCaIEMmNJltp-qRI";
-export type Row = Record<string, string>;
+type Known =
+  | "Date" | "Sport" | "Game" | "Player" | "Team" | "Market" | "Side" | "Line" | "Price" | "Book"
+  | "Projection" | "Tier" | "Type" | "Confidence" | "Note" | "Favorite" | "Spread" | "Total"
+  | "Ticket" | "Legs" | "Headline" | "Body" | "Result" | "Units" | "Actual" | "Role";
+export type Row = Record<string, string> & { [K in Known]: string };
 
 export function parseCsv(text: string): Row[] {
   const rows: string[][] = [];
