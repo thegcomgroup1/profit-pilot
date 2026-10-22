@@ -180,7 +180,7 @@ function vWriteup(){const w=(S.data.writeups||[]).find(x=>wid(x)===S.id);
  ${res?`<div class="pm ${res[0]}"><span class="lab">After the game · <span class="res big ${res[0]}">${res}</span></span><p>${esc(pm)}</p></div>`:""}
  ${paras(w.Body)}
  <div class="btnrow"><button class="cta" id="share">Copy link to share</button><a class="cta" href="https://x.com/TeejTradez" target="_blank" rel="noopener" style="text-decoration:none">Follow @TeejTradez</a></div>
- <p class="note">Model output, not betting advice. Prices move, so shop your number. 21+. 1-800-GAMBLER.</p></article>`}
+ <p class="note">Model output, not betting advice. All odds are estimated. Prices move, so shop your number. 21+. 1-800-GAMBLER.</p></article>`}
 
 function vMethod(){return `<section class="intro"><span class="lab">How it works</span><h1>Price it. Compare it. Grade it.</h1></section>
  <section class="prose">
