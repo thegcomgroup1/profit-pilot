@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Site data is read from the public Google Sheet (gviz CSV) via one server function in src/lib/sheet.ts, cached with React Query; the sheet stays the single source of truth so the owner edits picks there.

@@ -10,33 +10,103 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as EdgesRouteImport } from './routes/edges'
+import { Route as RecordRouteImport } from './routes/record'
+import { Route as GameIdRouteImport } from './routes/game.$id'
+import { Route as WhyIndexRouteImport } from './routes/why.index'
+import { Route as WhySlugRouteImport } from './routes/why.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EdgesRoute = EdgesRouteImport.update({
+  id: '/edges',
+  path: '/edges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecordRoute = RecordRouteImport.update({
+  id: '/record',
+  path: '/record',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GameIdRoute = GameIdRouteImport.update({
+  id: '/game/$id',
+  path: '/game/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WhyIndexRoute = WhyIndexRouteImport.update({
+  id: '/why/',
+  path: '/why/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WhySlugRoute = WhySlugRouteImport.update({
+  id: '/why/$slug',
+  path: '/why/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/edges': typeof EdgesRoute
+  '/record': typeof RecordRoute
+  '/game/$id': typeof GameIdRoute
+  '/why/$slug': typeof WhySlugRoute
+  '/why/': typeof WhyIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/edges': typeof EdgesRoute
+  '/record': typeof RecordRoute
+  '/game/$id': typeof GameIdRoute
+  '/why/$slug': typeof WhySlugRoute
+  '/why': typeof WhyIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/edges': typeof EdgesRoute
+  '/record': typeof RecordRoute
+  '/game/$id': typeof GameIdRoute
+  '/why/$slug': typeof WhySlugRoute
+  '/why/': typeof WhyIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/about' | '/edges' | '/record' | '/game/$id' | '/why/$slug' | '/why/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    '/' | '/about' | '/edges' | '/record' | '/game/$id' | '/why/$slug' | '/why'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/edges'
+    | '/record'
+    | '/game/$id'
+    | '/why/$slug'
+    | '/why/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  EdgesRoute: typeof EdgesRoute
+  RecordRoute: typeof RecordRoute
+  GameIdRoute: typeof GameIdRoute
+  WhySlugRoute: typeof WhySlugRoute
+  WhyIndexRoute: typeof WhyIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +118,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/edges': {
+      id: '/edges'
+      path: '/edges'
+      fullPath: '/edges'
+      preLoaderRoute: typeof EdgesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/record': {
+      id: '/record'
+      path: '/record'
+      fullPath: '/record'
+      preLoaderRoute: typeof RecordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/game/$id': {
+      id: '/game/$id'
+      path: '/game/$id'
+      fullPath: '/game/$id'
+      preLoaderRoute: typeof GameIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/why/': {
+      id: '/why/'
+      path: '/why'
+      fullPath: '/why/'
+      preLoaderRoute: typeof WhyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/why/$slug': {
+      id: '/why/$slug'
+      path: '/why/$slug'
+      fullPath: '/why/$slug'
+      preLoaderRoute: typeof WhySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  EdgesRoute: EdgesRoute,
+  RecordRoute: RecordRoute,
+  GameIdRoute: GameIdRoute,
+  WhySlugRoute: WhySlugRoute,
+  WhyIndexRoute: WhyIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
