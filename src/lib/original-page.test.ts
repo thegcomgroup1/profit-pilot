@@ -25,7 +25,7 @@ describe("record view", () => {
   });
 
   it("shows the sharp-backed empty state when the tab's first cell starts with No sharp-backed", () => {
-    const note = row({ "No sharp-backed picks yet": "no data" });
+    const note = row({ Date: "No sharp-backed picks yet" });
     const html = renderOriginal("record", site([note]), "NBA", null);
     expect(html).toContain("The sharp-backed record starts with tonight's picks. Check back tomorrow morning.");
   });
