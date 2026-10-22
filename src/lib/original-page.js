@@ -26,7 +26,7 @@ function bars(r){const us=pct(r["Our %"]),bk=pct(r["Book %"]);if(us==null)return
 function sharpOf(r){const v=String(r.Sharp||"").toLowerCase();return /back|confirm|✅/.test(v)?"B":/against|conflict|⛔/.test(v)?"A":/neutral|no ?read|➖/.test(v)?"N":""}
 function sharpTag(r){const k=sharpOf(r);return k==="B"?'<span class="tag sharp" title="The sharpest markets agree with the model on this one">Sharp-backed ✓</span>':k==="A"?'<span class="tag neg" title="Sharp money is on the other side">Sharps disagree</span>':k==="N"?'<span class="tag" title="Not enough sharp money on this prop to read">Sharp: no read</span>':""}
 function edgeTag(r){const e=num(r["Edge %"]);if(e==null)return"";return `<span class="tag ${e>0?"pos":"neg"}">Edge ${e>0?"+":""}${e.toFixed(1)}%</span>`}
-function typeTag(r){return r.Type==="Straight"?'<span class="tag pick">Model pick</span>':r.Type==="Fade"?'<span class="tag neg">Fade</span>':r.Type==="Pass"?'<span class="tag">Pass</span>':r.Type==="Pulled"?'<span class="tag neg">Pulled · late news</span>':""}
+function typeTag(r){return r.Type==="Straight"?'<span class="tag pick">Model pick</span>':r.Type==="Fade"?'<span class="tag neg">Fade</span>':r.Type==="Pass"?'<span class="tag">Pass</span>':r.Type==="Lean"?'<span class="tag">Lean</span>':r.Type==="Pulled"?'<span class="tag neg">Pulled · late news</span>':""}
 
 /* ---------- data helpers ---------- */
 function day(){const rows=S.data.board.filter(r=>r.Sport===S.sport);if(!rows.length)return null;
@@ -132,11 +132,12 @@ function vEdges(){const d=day();if(!d)return vBoard();
  <div style="display:grid;gap:8px">${rows.map(r=>row(r).replace('<span class="rname">',`<span class="rname"><span class="lab" style="display:block">${esc(r.Game.replace("@"," @ "))} · ${esc(mk(r.Market))}</span>`)).join("")||'<div class="empty">Nothing matches. Try another filter.</div>'}</div></section>`}
 
 function vRecord(){const rs=recRows();const st=rs.filter(r=>r.role==="STRAIGHT");
- const sets={picks:["Model picks",st],e3:["Picks · 3%+ edge",st.filter(r=>r.ev!=null&&r.ev>=3)],under:["Unders · every row",rs.filter(r=>r.Side==="Under")],all:["Every row priced",rs]};
+ const raw=S.sport==="NFL"?S.data.nfl:S.data.nba;const sharpNote=rs.length===0&&raw.length>0&&Object.values(raw[0]).some(v=>/^No sharp-backed/.test(String(v).trim()));
+ const sets={picks:["Model picks",st],e3:["Picks · 3%+ edge",st.filter(r=>r.ev!=null&&r.ev>=3)]};
  let list=sets[S.rf][1];const mks=["All",...new Set(list.map(r=>r.Market))].sort((a,b)=>a==="All"?-1:b==="All"?1:a<b?-1:1);
  if(S.rmk!=="All")list=list.filter(r=>r.Market===S.rmk);list=[...list].sort((a,b)=>a.Date<b.Date?1:-1);
  return `<section class="intro"><span class="lab">${S.sport} record</span><h1>Every pick. Graded. Nothing deleted.</h1>
- <p class="lede">Each pick is graded against the price posted before the game, using the official box score. Losses stay on the board. Units assume 1 unit on every pick. Break-even at −110 is 52.4%, and at these sample sizes a few games either way is noise.</p>${stamp()}</section>
+ <p class="lede">Only picks that clear the full model AND the sharp-money check count here. The record starts Oct 22, 2026. Every pick is graded against the price posted before the game, using the official box score. Losses stay on the record.</p>${stamp()}</section>
  <section style="display:grid;gap:10px"><span class="lab">Tap a tile to filter the list</span><div class="tiles">${Object.entries(sets).map(([k,[l,r]])=>{const a=agg(r);return `<button class="tile" data-rf="${k}" aria-pressed="${S.rf===k}"><span class="lab">${l}</span><span class="big">${rec(a)}</span><span class="s">${a.n?`${(a.hit*100).toFixed(1)}% · <span class="${a.u>=0?"posc":"negc"}">${units(a.u)}</span>`:"no graded picks yet"}</span></button>`}).join("")}</div></section>
  ${rs.length?`<section>${chart(st)}</section>
  <section style="display:grid;gap:10px"><div class="day"><h2>Showing ${sets[S.rf][0].toLowerCase()}</h2><span>${list.length} graded</span></div>
@@ -144,7 +145,7 @@ function vRecord(){const rs=recRows();const st=rs.filter(r=>r.role==="STRAIGHT")
  <div class="tw"><table><thead><tr><th>Date</th><th>Player</th><th>Bet</th><th>Price</th><th>Model %</th><th>Actual</th><th>Result</th><th>Units</th></tr></thead><tbody>
  ${list.slice(0,S.shown).map(r=>`<tr><td>${esc(r.Date)}</td><td>${esc(r.Player)}<br><span class="lab">${esc(r.Game)}</span></td><td>${esc(r.Side)} ${esc(r.Line)} ${esc(mk(r.Market))}</td><td class="n">${odds(r.price)}</td><td class="n">${r.p!=null?(r.p*100).toFixed(0)+"%":"—"}</td><td class="n">${esc(r.Actual)}</td><td><span class="res ${r.Result[0]}">${r.Result}</span></td><td class="n ${r.u>=0?"posc":"negc"}">${r.u>=0?"+":""}${r.u.toFixed(2)}</td></tr>`).join("")}
  </tbody></table></div>${list.length>S.shown?`<button class="cta" id="more" style="justify-self:center">Show ${Math.min(60,list.length-S.shown)} more</button>`:""}</section>`
- :`<section class="empty"><span>${S.sport} grading starts after the first board. Check back tomorrow morning.</span>${S.sport==="NBA"?'<button class="cta" data-sp="NFL">See the NFL record →</button>':""}</section>`}`}
+ :`<section class="empty"><span>${sharpNote?"The sharp-backed record starts with tonight's picks. Check back tomorrow morning.":`${S.sport} grading starts after the first board. Check back tomorrow morning.`}</span>${S.sport==="NBA"?'<button class="cta" data-sp="NFL">See the NFL record →</button>':""}</section>`}`}
 function chart(st){st=[...st].sort((a,b)=>a.Date<b.Date?-1:1);if(st.length<3)return"";let c=0;const pts=st.map(r=>c+=r.u);
  const W=800,H=190,L=40,R=12,T=14,B=26,mn=Math.min(0,...pts),mx=Math.max(0,...pts);
  const x=i=>L+(i/(pts.length-1))*(W-L-R),y=v=>T+(mx-v)/((mx-mn)||1)*(H-T-B);
