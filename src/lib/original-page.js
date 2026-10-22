@@ -1,10 +1,10 @@
 // Pure view templates retained from the supplied Profit Pilot HTML.
-export function renderOriginal(view,data,sport,id,filters={}) {
+export function renderOriginal(view,data,selectedSport,id,filters={}) {
 const TEAMS={NBA:{ATL:"Hawks",BOS:"Celtics",BKN:"Nets",CHA:"Hornets",CHI:"Bulls",CLE:"Cavaliers",DAL:"Mavericks",DEN:"Nuggets",DET:"Pistons",GSW:"Warriors",HOU:"Rockets",IND:"Pacers",LAC:"Clippers",LAL:"Lakers",MEM:"Grizzlies",MIA:"Heat",MIL:"Bucks",MIN:"Timberwolves",NOP:"Pelicans",NYK:"Knicks",OKC:"Thunder",ORL:"Magic",PHI:"76ers",PHX:"Suns",POR:"Trail Blazers",SAC:"Kings",SAS:"Spurs",TOR:"Raptors",UTA:"Jazz",WAS:"Wizards"},
 NFL:{ARI:"Cardinals",ATL:"Falcons",BAL:"Ravens",BUF:"Bills",CAR:"Panthers",CHI:"Bears",CIN:"Bengals",CLE:"Browns",DAL:"Cowboys",DEN:"Broncos",DET:"Lions",GB:"Packers",HOU:"Texans",IND:"Colts",JAX:"Jaguars",KC:"Chiefs",LV:"Raiders",LAC:"Chargers",LAR:"Rams",LA:"Rams",MIA:"Dolphins",MIN:"Vikings",NE:"Patriots",NO:"Saints",NYG:"Giants",NYJ:"Jets",PHI:"Eagles",PIT:"Steelers",SF:"49ers",SEA:"Seahawks",TB:"Buccaneers",TEN:"Titans",WAS:"Commanders"}};
 const MK={PTS:"Points",REB:"Rebounds",AST:"Assists","3PT":"Threes","3PM":"Threes",PRA:"Pts+Reb+Ast",PR:"Pts+Reb",PA:"Pts+Ast",RA:"Reb+Ast",STL:"Steals",BLK:"Blocks",DD:"Double-double","First Basket":"First basket",
  "Rec yds":"Receiving yards","Rush yds":"Rushing yards","Pass yds":"Passing yards",Rec:"Receptions","Rush+Rec yds":"Scrimmage yards",ATTD:"Anytime TD","First TD":"First TD","2+ TD":"2+ TDs","Either TD":"Either player TD","Rush att":"Rush attempts",Completions:"Completions","Pass att":"Pass attempts","Pass TD":"Passing TDs"};
-const S={sport,view,id,data:{...data,nba:data.record.filter(r=>r.Sport==="NBA"),nfl:data.record.filter(r=>r.Sport==="NFL")},live:true,rf:"picks",rmk:"All",shown:40,ef:"pos",emk:"All",q:"",gf:"all",...filters};
+const S={sport:selectedSport,view,id,data:{...data,nba:data.record.filter(r=>r.Sport==="NBA"),nfl:data.record.filter(r=>r.Sport==="NFL")},live:true,rf:"picks",rmk:"All",shown:40,ef:"pos",emk:"All",q:"",gf:"all",...filters};
 
 const num=v=>{const n=parseFloat(String(v??"").replace(/[%,+]/g,"").replace("−","-"));return isNaN(n)?null:n};
 const pct=v=>{const n=num(v);return n==null?null:(n>1?n/100:n)};
