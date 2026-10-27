@@ -26,7 +26,11 @@ export function groupGems(rows: Row[], category: string, source = "All") {
     if (!entries.some(e => sourceOf(e) === sourceOf(r))) entries.push(r);
     grouped.set(key, entries);
   }
-  return [...grouped.values()].map(entries => ({ row: entries[0], entries, source: entries.length > 1 ? "Both models" : sourceOf(entries[0]) }));
+  return [...grouped.values()].flatMap(entries => {
+    const first = entries[0];
+    if (!first) return [];
+    return [{ row: first, entries, source: entries.length > 1 ? "Both models" : sourceOf(first) }];
+  });
 }
 
 export function categoryTickets(tickets: Row[], category: string, source = "All") {
