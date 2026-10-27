@@ -1,10 +1,11 @@
 // Pure view templates retained from the supplied Profit Pilot HTML.
+import { categories, sourceOf, flagsOf, categoryOf, publicPicks, extraRows, groupGems, categoryTickets, orderTickets, splitBreakdown } from "./pickboard";
 export function renderOriginal(view,data,selectedSport,id,filters={}) {
 const TEAMS={NBA:{ATL:"Hawks",BOS:"Celtics",BKN:"Nets",CHA:"Hornets",CHI:"Bulls",CLE:"Cavaliers",DAL:"Mavericks",DEN:"Nuggets",DET:"Pistons",GSW:"Warriors",HOU:"Rockets",IND:"Pacers",LAC:"Clippers",LAL:"Lakers",MEM:"Grizzlies",MIA:"Heat",MIL:"Bucks",MIN:"Timberwolves",NOP:"Pelicans",NYK:"Knicks",OKC:"Thunder",ORL:"Magic",PHI:"76ers",PHX:"Suns",POR:"Trail Blazers",SAC:"Kings",SAS:"Spurs",TOR:"Raptors",UTA:"Jazz",WAS:"Wizards"},
 NFL:{ARI:"Cardinals",ATL:"Falcons",BAL:"Ravens",BUF:"Bills",CAR:"Panthers",CHI:"Bears",CIN:"Bengals",CLE:"Browns",DAL:"Cowboys",DEN:"Broncos",DET:"Lions",GB:"Packers",HOU:"Texans",IND:"Colts",JAX:"Jaguars",KC:"Chiefs",LV:"Raiders",LAC:"Chargers",LAR:"Rams",LA:"Rams",MIA:"Dolphins",MIN:"Vikings",NE:"Patriots",NO:"Saints",NYG:"Giants",NYJ:"Jets",PHI:"Eagles",PIT:"Steelers",SF:"49ers",SEA:"Seahawks",TB:"Buccaneers",TEN:"Titans",WAS:"Commanders"}};
 const MK={PTS:"Points",REB:"Rebounds",AST:"Assists","3PT":"Threes","3PM":"Threes",PRA:"Pts+Reb+Ast",PR:"Pts+Reb",PA:"Pts+Ast",RA:"Reb+Ast",STL:"Steals",BLK:"Blocks",DD:"Double-double","First Basket":"First basket",
  "Rec yds":"Receiving yards","Rush yds":"Rushing yards","Pass yds":"Passing yards",Rec:"Receptions","Rush+Rec yds":"Scrimmage yards",ATTD:"Anytime TD","First TD":"First TD","2+ TD":"2+ TDs","Either TD":"Either player TD","Rush att":"Rush attempts",Completions:"Completions","Pass att":"Pass attempts","Pass TD":"Passing TDs"};
-const S={sport:selectedSport,view,id,data:{...data,nba:data.record.filter(r=>r.Sport==="NBA"),nfl:data.record.filter(r=>r.Sport==="NFL")},live:true,rf:"picks",rmk:"All",shown:40,ef:"pos",emk:"All",q:"",gf:"all",...filters};
+const S={sport:selectedSport,view,id,data:{...data,nba:data.record.filter(r=>r.Sport==="NBA"),nfl:data.record.filter(r=>r.Sport==="NFL")},live:true,rf:"picks",rmk:"All",shown:40,ef:"pos",emk:"All",q:"",gf:"all",oc:"",os:"All",...filters};
 
 const num=v=>{const n=parseFloat(String(v??"").replace(/[%,+]/g,"").replace("−","-"));return isNaN(n)?null:n};
 const pct=v=>{const n=num(v);return n==null?null:(n>1?n/100:n)};
@@ -26,11 +27,13 @@ function bars(r){const us=pct(r["Our %"]),bk=pct(r["Book %"]);if(us==null)return
 function sharpOf(r){const v=String(r.Sharp||"").toLowerCase();return /back|confirm|✅/.test(v)?"B":/against|conflict|⛔/.test(v)?"A":/neutral|no ?read|➖/.test(v)?"N":""}
 function sharpTag(r){const k=sharpOf(r);return k==="B"?'<span class="tag sharp" title="The sharpest markets agree with the model on this one">Sharp-backed ✓</span>':k==="A"?'<span class="tag neg" title="Sharp money is on the other side">Sharps disagree</span>':k==="N"?'<span class="tag" title="Not enough sharp money on this prop to read">Sharp: no read</span>':""}
 function edgeTag(r){const e=num(r["Edge %"]);if(e==null)return"";return `<span class="tag ${e>0?"pos":"neg"}">Edge ${e>0?"+":""}${e.toFixed(1)}%</span>`}
-function typeTag(r){return r.Type==="Straight"?'<span class="tag pick">Model pick</span>':r.Type==="Fade"?'<span class="tag neg">Fade</span>':r.Type==="Pass"?'<span class="tag">Pass</span>':r.Type==="Lean"?'<span class="tag">Lean</span>':r.Type==="Pulled"?'<span class="tag neg">Pulled · late news</span>':""}
+function typeTag(r){return r.Type==="Gem"?'<span class="tag gold">💎 Gem</span>':r.Type==="Straight"?'<span class="tag pick">Model pick</span>':r.Type==="Fade"?'<span class="tag neg">Fade</span>':r.Type==="Pass"?'<span class="tag">Pass</span>':r.Type==="Lean"?'<span class="tag">Lean</span>':r.Type==="Pulled"?'<span class="tag neg">Pulled · late news</span>':""}
+function sourceTag(r){return `<span class="tag source">${esc(sourceOf(r))}</span>`}
 
 /* ---------- data helpers ---------- */
-function day(){const rows=S.data.board.filter(r=>r.Sport===S.sport);if(!rows.length)return null;
- const last=rows.map(r=>r.Date).sort().pop();
+function day(){const rows=S.data.board.filter(r=>r.Sport===S.sport);
+ const dates=[...rows,...S.data.games.filter(g=>g.Sport===S.sport),...S.data.tickets.filter(t=>t.Sport===S.sport)].map(r=>r.Date).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d));if(!dates.length)return null;
+ const last=dates.sort().pop();
  const games=S.data.games.filter(g=>g.Sport===S.sport&&g.Date===last);
  const names=[...new Set([...games.map(g=>g.Game),...rows.filter(r=>r.Date===last).map(r=>r.Game)])];
  const gl=names.map(n=>{const g=games.find(x=>x.Game===n)||{Game:n,Date:last};return {...g,Date:last,rows:rows.filter(r=>r.Date===last&&r.Game===n)}});
@@ -52,20 +55,34 @@ function vBoard(){const d=day();const season=agg(recRows().filter(r=>r.role==="S
  if(!d)return `<section class="intro"><span class="lab">${S.sport} model</span><h1>Next ${S.sport} board is on the way</h1>
   <p class="lede">${S.sport==="NFL"?"The NFL board posts Sunday before the early games, plus Thursday and Monday night before kickoff.":"The NBA board posts every game day around 1 PM ET, with an injury check before the evening tips."} Every pick is graded against the box score the next morning.</p>${stamp()}</section>
   <section class="chips4"><button class="sum lead" data-go="record"><span class="lab">Model picks · season</span><span class="v">${rec(season)}</span><span class="s">${season.n?units(season.u)+" · "+(season.hit*100).toFixed(1)+"%":"Grading starts after the first board"}</span></button></section>`;
- const picks=d.rows.filter(r=>r.Type==="Straight");const best=[...d.rows].filter(r=>r.Type!=="Fade"&&r.Type!=="Pass"&&r.Type!=="Pulled").sort((a,b)=>num(b["Edge %"])-num(a["Edge %"]))[0];
+ const picks=publicPicks(d.rows);const more=extraRows(d.rows);const best=[...d.rows].filter(r=>r.Type!=="Fade"&&r.Type!=="Pass"&&r.Type!=="Pulled"&&num(r["Edge %"])!=null).sort((a,b)=>num(b["Edge %"])-num(a["Edge %"]))[0];
  return `<section class="intro"><span class="lab">${S.sport} model · ${esc(fmtDay(d.date))}</span><h1>The model's number vs the book's</h1>
  <p class="lede">The model prices every prop itself, then compares it with the sportsbook's price after removing the book's cut. Its picks also have to pass a sharp check against the sharpest markets. Tap a game to open the prop analyzer. Every pick gets graded tomorrow, wins and losses.</p>${stamp()}</section>
  <section class="chips4">
   <button class="sum lead" data-go="record"><span class="lab">Model picks · season</span><span class="v">${rec(season)}</span><span class="s">${season.n?units(season.u)+" · "+(season.hit*100).toFixed(1)+"% hit":"Grading starts tomorrow morning"}</span></button>
-  <button class="sum" data-jump="picks"><span class="lab">Today's picks</span><span class="v">${picks.length}</span><span class="s">${picks.filter(r=>sharpOf(r)==="B").length?picks.filter(r=>sharpOf(r)==="B").length+" sharp-backed · ":""}across ${d.games.length} game${d.games.length===1?"":"s"}</span></button>
+  <button class="sum" data-jump="${picks.length?"picks":d.rows.some(r=>r.Type==="Gem")?"outliers":"games"}"><span class="lab">Today's picks</span><span class="v">${picks.length}</span><span class="s">${picks.filter(r=>sharpOf(r)==="B").length?picks.filter(r=>sharpOf(r)==="B").length+" sharp-backed · ":""}across ${d.games.length} game${d.games.length===1?"":"s"}</span></button>
   ${best?`<button class="sum" data-go="${gid(d.date,best.Game)}"><span class="lab">Biggest edge</span><span class="v">+${num(best["Edge %"]).toFixed(1)}%</span><span class="s">${esc(best.Player)} ${sideShort(best.Side)}${esc(best.Line)} ${esc(mk(best.Market))}</span></button>`:""}
   <button class="sum" data-go="edges"><span class="lab">Props priced</span><span class="v">${d.rows.length}</span><span class="s">sorted by edge on the Edges page</span></button>
  </section>
- <section id="picks" style="display:grid;gap:12px"><div class="day"><h2>Today's picks</h2><span>${picks.length} straight${picks.length===1?"":"s"}</span></div>
-  <div class="picks">${picks.map((r,i)=>pickCard(r,i)).join("")||'<div class="empty">No straight cleared the bar today. A thin board is still a board.</div>'}</div></section>
- <section style="display:grid;gap:12px"><div class="day"><h2>${esc(fmtDay(d.date))}</h2><span>${d.games.length} games</span></div>
-  <div class="games">${d.games.map(g=>gameCard(g,d.date)).join("")}</div></section>
- ${d.tickets.length?`<section style="display:grid;gap:12px"><div class="day"><h2>Tickets</h2><span>lottos are lottos · small stakes</span></div><div class="tix">${d.tickets.map(ticket).join("")}</div></section>`:""}`}
+ ${outliers(d)}
+ ${picks.length?`<section id="picks" class="section-stack"><div class="day"><h2>Today's picks</h2><span>${picks.length} straight${picks.length===1?"":"s"}</span></div><div class="picks">${picks.map((r,i)=>pickCard(r,i)).join("")}</div></section>`:""}
+ ${d.games.length?`<section id="games" class="section-stack"><div class="day"><h2>${esc(fmtDay(d.date))}</h2><span>${d.games.length} games</span></div><div class="games">${d.games.map(g=>gameCard(g,d.date)).join("")}</div></section>`:""}
+ ${more.length?`<details class="more-board"><summary>More from the board <span>${more.length} leans / passes</span></summary><div class="section-stack">${more.map(row).join("")}</div></details>`:""}
+ ${d.tickets.length?`<section class="section-stack"><div class="day"><h2>Tickets</h2><span>lottos are lottos · small stakes</span></div><div class="tix">${orderTickets(d.tickets).map(ticket).join("")}</div></section>`:""}`}
+
+function outliers(d){const available=categories.filter(c=>d.rows.some(r=>r.Type==="Gem"&&categoryOf(r)===c.key));if(!available.length)return "";
+ const selected=available.find(c=>c.key===S.oc)||available[0];const gems=groupGems(d.rows,selected.key,S.os);const parlays=categoryTickets(d.tickets,selected.key,S.os);
+ return `<section id="outliers" class="section-stack"><div class="day"><h2>💎 Outliers</h2><span>${d.rows.filter(r=>r.Type==="Gem").length} model spots</span></div>
+ <div class="category-tabs" role="group" aria-label="Outlier category">${available.map(c=>`<button class="f" data-oc="${c.key}" aria-pressed="${selected.key===c.key}">${c.label}</button>`).join("")}</div>
+ <div class="filters" role="group" aria-label="Outlier model">${["All","Model A","Model B"].map(s=>`<button class="f" data-os="${s}" aria-pressed="${S.os===s}">${s}</button>`).join("")}</div>
+ <div class="outlier-grid">${gems.map(gemCard).join("")||'<p class="note">No outliers from this model in this category.</p>'}</div>
+ ${parlays.length?`<h3>${selected.label} parlays</h3><div class="tix">${parlays.map(ticket).join("")}</div>`:""}</section>`}
+function gemCard(gem){const r=gem.row;const market=mk(r.Market).toLowerCase();const bet=[r.Side,r.Line,market].filter(Boolean).join(" ");
+ return `<article class="pcard gem-card"><div class="gtime"><span class="pmeta">${esc(r.Game.replace("@"," @ "))}</span><span class="tag source">${esc(gem.source)}</span></div><h3>${esc(r.Player)}</h3><div class="gem-bet">${esc(bet)}</div>
+ ${gem.entries.map(entry=>`<div class="gem-model"><span class="lab">${esc(sourceOf(entry))}</span><div class="pmeta">${odds(entry.Price)} at ${esc(entry.Book)}${pct(entry["Our %"])!=null?` · model ${(pct(entry["Our %"])*100).toFixed(1)}%`:""}</div><div class="tags">${flagsOf(entry).slice(1).map(f=>`<span class="tag">${esc(f)}</span>`).join("")}</div>${entry.Thesis?`<p class="note thesis">${esc(entry.Thesis)}</p>`:""}</div>`).join("")}
+ <div class="btnrow"><button class="cta" data-go="${gid(r.Date,r.Game)}">Open the game →</button></div></article>`}
+function breakdown(g){if(!g.Breakdown&&!g["Model B Thesis"])return "";const parts=splitBreakdown(g.Breakdown||"");
+ return `<details class="game-breakdown"><summary>Breakdown <span class="chev">›</span></summary><div class="breakdown-body">${g.Breakdown?`<span class="lab">Model A</span>${parts.body?`<p class="thesis">${esc(parts.body)}</p>`:""}${parts.narrative.length?`<div class="narrative-strip">${parts.narrative.map(p=>{const match=p.match(/^(NARRATIVE|PRICED IN|OPPOSITE SCRIPT|VERDICT)\s*:?\s*(.*)$/i);return `<div><span class="lab">${esc(match?match[1]:"Narrative")}</span><span>${esc(match?match[2]:p)}</span></div>`}).join("")}</div>`:""}`:""}${g["Model B Thesis"]?`<h3>Second opinion</h3><span class="lab">Model B</span><p class="thesis">${esc(g["Model B Thesis"])}</p>`:""}</div></details>`}
 function pickCard(r,i){return `<article class="pcard"><div class="gtime"><span class="pnum">${String(i+1).padStart(2,"0")} · ${esc(r.Game.replace("@"," @ "))}</span><span class="pmeta">${esc(r["Tip ET"])} ET</span></div>
  <div class="pwho">${esc(r.Player)}</div><div class="pbet">${esc(r.Side.toUpperCase())} ${esc(r.Line)} <small>${esc(mk(r.Market).toLowerCase())}</small></div>
  <div class="pmeta">${odds(r.Price)} at ${esc(r.Book)}${r.Projection?` · model projection ${esc(r.Projection)}`:""}</div>${bars(r)}
@@ -79,9 +96,9 @@ function gameCard(g,date){const [a,h]=g.Game.split("@");const im=implied(g);cons
  <dl class="kv">${g.Spread?`<dt>Vegas line</dt><dd>${esc(g.Favorite)} −${esc(g.Spread)} · total ${esc(g.Total)}</dd>`:""}
  <dt>Model picks</dt><dd>${picks.length?picks.map(p=>`${esc(p.Player.split(" ").slice(-1)[0])} ${sideShort(p.Side)}${esc(p.Line)} ${esc(p.Market)}`).join(", "):"none in this game"}</dd>
  ${best?`<dt>Best edge</dt><dd>${esc(best.Player)} ${sideShort(best.Side)}${esc(best.Line)} ${esc(best.Market)} · <span class="posc">+${num(best["Edge %"]).toFixed(1)}%</span></dd>`:""}</dl>
- ${g.Note?`<p class="note">${esc(g.Note)}</p>`:""}
+ ${g.Note?`<p class="note">${esc(g.Note)}</p>`:""}${breakdown(g)}
  <div class="btnrow"><button class="cta solid" data-go="${gid(date,g.Game)}">Prop analyzer →</button>${fb?`<button class="cta" data-go="${gid(date,g.Game)}" data-mf="First">${S.sport==="NFL"?"First TD":"First basket"} →</button>`:`<span class="cta locked">${S.sport==="NFL"?"First TD":"First basket"} · not priced</span>`}</div></article>`}
-function ticket(t){return `<div class="tk"><div class="top"><span class="tag gold">${esc(t.Tier)} · ${esc(t["Leg count"])} legs</span><span class="odds">${odds(t["Est. odds"])}</span></div>
+function ticket(t){return `<div class="tk"><div class="top"><span class="tag gold">${esc(t.Tier)}${t["Leg count"]?` · ${esc(t["Leg count"])} legs`:""}</span><span class="odds">${odds(t["Est. odds"])}</span></div>${sourceTag(t)}
  <h3>${esc(t.Ticket)}</h3><ol>${String(t.Legs).split("|").map(l=>`<li>${esc(l.trim())}</li>`).join("")}</ol>
  <p class="note">Hits about ${((pct(t["Our %"])||0)*100).toFixed(1)}% of the time. What kills it: ${esc(t["What kills it"])}</p></div>`}
 
@@ -100,9 +117,9 @@ function vGame(){const d=day();const g=d&&d.games.find(x=>gid(d.date,x.Game)===S
  <section class="chips4">
   ${g.Spread?`<div class="sum"><span class="lab">Vegas line</span><span class="v">${esc(g.Favorite)} −${esc(g.Spread)}</span><span class="s">total ${esc(g.Total)}</span></div>`:""}
   ${im?`<div class="sum"><span class="lab">Implied team totals</span><span class="v">${a} ${im[a].toFixed(1)} · ${h} ${im[h].toFixed(1)}</span><span class="s">from the spread and total</span></div>`:""}
-  <div class="sum"><span class="lab">Model picks here</span><span class="v">${picks.length}</span><span class="s">${picks.length?picks.map(p=>esc(p.Player.split(" ").slice(-1)[0])).join(", "):"nothing cleared the bar"}</span></div>
+  <div class="sum"><span class="lab">Model picks here</span><span class="v">${picks.length}</span><span class="s">${picks.length?picks.map(p=>esc(p.Player.split(" ").slice(-1)[0])).join(", "):"Game breakdown below"}</span></div>
  </section>
- ${g.Note?`<p class="lede">${esc(g.Note)}</p>`:""}
+ ${g.Note?`<p class="lede">${esc(g.Note)}</p>`:""}${breakdown(g)}
  <section style="display:grid;gap:14px"><div class="filters">
   <button class="f" data-gf="all" aria-pressed="${S.gf==="all"}">Every prop</button><button class="f" data-gf="pos" aria-pressed="${S.gf==="pos"}">Positive edge</button><button class="f" data-gf="picks" aria-pressed="${S.gf==="picks"}">Model picks</button></div>
  ${order.length?order.map(m=>`<div class="mkt" id="m-${esc(m.replace(/[^A-Za-z0-9]/g,""))}"><h3>${esc(mk(m))}<span>${groups[m].length}</span></h3>${groups[m].map(row).join("")}</div>`).join(""):'<div class="empty">Nothing matches that filter in this game.</div>'}
@@ -115,7 +132,7 @@ function row(r){const us=pct(r["Our %"]);const n=us!=null?Math.round(us*50):null
  const sim=n!=null?`<div class="sim"><span class="lab">50 simulated games</span><div class="ticks" aria-hidden="true">${Array.from({length:50},(_,i)=>`<i class="${i<n?"h":""}"></i>`).join("")}</div><span class="simcap">About ${n} of 50 nights the ${r.Side==="Under"?"under":r.Side==="Over"?"over":"bet"} cashes · break-even at ${odds(r.Price)} is ${Math.round(be(num(r.Price))*50)} of 50</span></div>`:"";
  return `<details class="row"><summary><span class="rname">${esc(r.Player)}<small>${esc(r.Side)} ${esc(r.Line)} · ${esc(r.Team)}</small></span>
  <span class="rprice">${odds(r.Price)}<small>${esc(r.Book)}</small></span><span class="tags">${typeTag(r)}${sharpOf(r)==="B"?'<span class="tag sharp">Sharp ✓</span>':""}${edgeTag(r)}<span class="chev">›</span></span></summary>
- <div class="rbody">${nl}${bars(r)}${sim}${r.Note?`<p class="note">${esc(r.Note)}</p>`:""}${findW(r)?`<button class="rlink" data-go="${wid(r)}">Read the full breakdown →</button>`:""}<div class="tags">${sharpTag(r)}${r.Confidence?`<span class="tag">${esc(r.Confidence)} confidence</span>`:""}${r.Tier?`<span class="tag">Tier ${esc(r.Tier)}</span>`:""}</div></div></details>`}
+ <div class="rbody">${nl}${bars(r)}${sim}${r.Thesis?`<p class="note thesis">${esc(r.Thesis)}</p>`:""}${r.Note?`<p class="note">${esc(r.Note)}</p>`:""}${findW(r)?`<button class="rlink" data-go="${wid(r)}">Read the full breakdown →</button>`:""}<div class="tags">${sourceTag(r)}${sharpTag(r)}${r.Confidence?`<span class="tag">${esc(r.Confidence)} confidence</span>`:""}${r.Tier?`<span class="tag">Tier ${esc(r.Tier)}</span>`:""}</div></div></details>`}
 const be=o=>o==null?0.5:(o>0?100/(o+100):-o/(-o+100));
 
 function vEdges(){const d=day();if(!d)return vBoard();

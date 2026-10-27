@@ -6,7 +6,8 @@ type Known =
   | "Date" | "Sport" | "Game" | "Player" | "Team" | "Market" | "Side" | "Line" | "Price" | "Book"
   | "Projection" | "Tier" | "Type" | "Confidence" | "Note" | "Favorite" | "Spread" | "Total"
   | "Ticket" | "Legs" | "Headline" | "Body" | "Result" | "Units" | "Actual" | "Role"
-  | "Our %" | "Book %" | "Edge %" | "Est. odds" | "What kills it" | "Post-mortem" | "Tip ET";
+  | "Our %" | "Book %" | "Edge %" | "Est. odds" | "What kills it" | "Post-mortem" | "Tip ET"
+  | "Source" | "Flags" | "Thesis" | "Breakdown" | "Model B Thesis";
 export type Row = { [K in Known]: string };
 
 export function parseCsv(text: string): Row[] {
