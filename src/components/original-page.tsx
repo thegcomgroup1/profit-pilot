@@ -15,7 +15,7 @@ export function OriginalPage({ view, sport = "NBA", id = null }: { view: string;
     : view === "writeup" ? (() => { const w = data.writeups.find(r => slugify(r) === id); return w ? `w-${w.Date.replace(/-/g, "")}-${slug(w.Player)}-${slug(w.Market)}-${slug(w.Side)}` : id; })() : id;
   function go(target: string) {
     if (target.startsWith("g-")) {
-      const game = data.board.find(r => `g-${r.Date.replace(/-/g, "")}-${r.Game.replace("@", "-")}` === target);
+      const game = [...data.board, ...data.games].find(r => `g-${r.Date.replace(/-/g, "")}-${r.Game.replace("@", "-")}` === target);
       if (game) void navigate({ to: "/game/$id", params: { id: game.Game }, search: { sport } });
     } else if (target.startsWith("w-")) {
       const w = data.writeups.find(r => `w-${r.Date.replace(/-/g, "")}-${slug(r.Player)}-${slug(r.Market)}-${slug(r.Side)}` === target);
@@ -34,7 +34,7 @@ export function OriginalPage({ view, sport = "NBA", id = null }: { view: string;
         const onClick = () => {
           if (a["data-go"]) { go(a["data-go"]); if(a["data-mf"]) setTimeout(() => document.querySelector('[id^="m-First"]')?.scrollIntoView(), 200); }
           if (a["data-jump"]) document.getElementById(a["data-jump"])?.scrollIntoView({ behavior: "smooth" });
-          for (const k of ["gf", "ef", "emk", "rf", "rmk"]) {
+          for (const k of ["gf", "ef", "emk", "rf", "rmk", "oc", "os"]) {
             const v = a[`data-${k}`];
             if (v) setFilters(f => ({ ...f, [k]: v, ...(k === "rf" ? { rmk: "All", shown: 40 } : k === "rmk" ? { shown: 40 } : {}) }));
           }
