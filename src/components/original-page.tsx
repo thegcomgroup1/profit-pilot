@@ -11,7 +11,7 @@ export function OriginalPage({ view, sport = "NBA", id = null }: { view: string;
   const navigate = useNavigate();
   const [filters, setFilters] = useState<Record<string, string | number>>({});
   const [copied, setCopied] = useState(false);
-  const internalId = view === "game" ? `g-${data.board.filter(r => r.Game === id).map(r => r.Date).sort().at(-1)?.replace(/-/g, "")}-${id?.replace("@", "-")}`
+  const internalId = view === "game" ? `g-${[...data.board, ...data.games].filter(r => r.Game === id && r.Sport === sport).map(r => r.Date).sort().at(-1)?.replace(/-/g, "")}-${id?.replace("@", "-")}`
     : view === "writeup" ? (() => { const w = data.writeups.find(r => slugify(r) === id); return w ? `w-${w.Date.replace(/-/g, "")}-${slug(w.Player)}-${slug(w.Market)}-${slug(w.Side)}` : id; })() : id;
   function go(target: string) {
     if (target.startsWith("g-")) {
