@@ -1,5 +1,5 @@
 # Restore supplied Profit Pilot page
-- [ ] Apply The Aviator display-only rebrand and verify at 375px.
+- [x] Apply The Aviator display-only rebrand and verify at 375px.
 - [x] Restore original layout, styling, and content across all views.
 - [x] Keep Google Sheet loading and existing page URLs.
 - [x] Verify board, game, filters, and mobile presentation.
@@ -10,4 +10,4 @@
 - [x] Add expandable game breakdowns, narrative strips, and second opinions.
 - [x] Keep straights separate, collapse extra rows, and reorder tickets.
 - [x] Verify rule tests, real board/game flows, and temporary new-field fixtures on mobile/desktop.
-- [ ] Verify new content from the real sheet — blocked: the public Games/Board/Tickets exports still lack the new columns and Gem rows.
+- [x] Verify new content from the real sheet — the live board now displays Gem rows, both model lanes, and category tickets.
