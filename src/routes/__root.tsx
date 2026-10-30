@@ -55,9 +55,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Profit Pilot Models" },
+      { title: "The Aviator — Profit Pilot" },
       { name: "description", content: "A free NBA and NFL player prop model. Our number vs the book's, every pick graded." },
-      { property: "og:site_name", content: "Profit Pilot" },
+      { property: "og:site_name", content: "The Aviator — Profit Pilot" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@TeejTradez" },

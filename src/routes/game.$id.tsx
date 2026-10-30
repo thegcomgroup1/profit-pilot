@@ -5,7 +5,7 @@ import { siteQuery, sportSearch, type Row } from "@/lib/sheet";
 export const Route = createFileRoute("/game/$id")({
  validateSearch: sportSearch,
  loader: ({context}) => context.queryClient.ensureQueryData(siteQuery),
- head: () => ({meta:[{title:"Game props — Profit Pilot"},{name:"description",content:"Player prop analyzer"},{property:"og:title",content:"Game props — Profit Pilot"},{property:"og:description",content:"Player prop analyzer"},{property:"og:type",content:"article"},{name:"twitter:card",content:"summary_large_image"}]}),
+ head: () => ({meta:[{title:"Game props — The Aviator — Profit Pilot"},{name:"description",content:"Player prop analyzer"},{property:"og:title",content:"Game props — The Aviator — Profit Pilot"},{property:"og:description",content:"Player prop analyzer"},{property:"og:type",content:"article"},{name:"twitter:card",content:"summary_large_image"}]}),
  component:Game,
  errorComponent: ({error}) => <Page eyebrow="Game props" title="Player prop analyzer"><ErrorBox error={error}/></Page>,
 });
