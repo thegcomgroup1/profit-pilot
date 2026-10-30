@@ -38,6 +38,12 @@ header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 .bar .wrap{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
 .home{all:unset;cursor:pointer;display:flex}
 .logo{height:32px;width:auto;display:block}
+.home{gap:8px;align-items:center;min-width:0}
+.brand-copy{display:grid;gap:4px;min-width:0}
+.wordmark{font:700 20px/1.2 var(--display);white-space:nowrap}
+.brand-tagline{font:400 11px/1.4 var(--body);color:var(--barsoft);max-width:52ch}
+.aviation-subtitle{display:block;font:400 11px/1.4 var(--body);text-transform:none;letter-spacing:0}
+@media(max-width:560px){.wordmark{font-size:18px}.home .logo{height:24px}.brand-tagline{max-width:44ch}}
 .bar nav{display:flex;gap:2px;margin-left:auto;flex-wrap:wrap}
 .bar nav a{all:unset;cursor:pointer;font:600 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--barsoft);padding:9px 10px;border-radius:6px}
 .bar nav a[aria-current="page"]{color:var(--bar);background:var(--hi)}

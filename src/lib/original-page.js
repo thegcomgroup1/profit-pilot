@@ -10,7 +10,10 @@ const S={sport:selectedSport,view,id,data:{...data,nba:data.record.filter(r=>r.S
 const num=v=>{const n=parseFloat(String(v??"").replace(/[%,+]/g,"").replace("−","-"));return isNaN(n)?null:n};
 const pct=v=>{const n=num(v);return n==null?null:(n>1?n/100:n)};
 const odds=v=>{const n=num(v);return n==null?"—":(n>0?"+":"−")+Math.abs(Math.round(n))};
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s??"").replace(/\bClaude\b/gi,"Model A").replace(/\bGemini\b/gi,"Model B").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const flightLabel=s=>esc(s).replace(/\bFloor[ -]Stack\b/gi,"Autopilot").replace(/\b(?:Outlier Lotto|Data-Backed Lotto|Lotto)\b/gi,"Long Haul");
+const tierLabel=s=>/floor[ -]stack/i.test(s||"")?`${flightLabel(s)}<small class="aviation-subtitle">floor stack</small>`:flightLabel(s);
+const resultLabel=s=>({WIN:"✅ Landed",LOSS:"❌",VOID:"VOID",PENDING:"🛫 In flight"}[String(s||"").toUpperCase()]||esc(s));
 const mk=m=>MK[m]||m;
 const gid=(d,g)=>"g-"+String(d).replace(/-/g,"")+"-"+String(g).replace("@","-");
 const fmtDay=d=>{const x=new Date(d+"T12:00:00");return isNaN(x)?d:x.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})};
