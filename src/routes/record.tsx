@@ -5,9 +5,9 @@ import { siteQuery, sportSearch, type Row } from "@/lib/sheet";
 export const Route = createFileRoute("/record")({
  validateSearch: sportSearch,
  loader: ({context}) => context.queryClient.ensureQueryData(siteQuery),
- head: () => ({meta:[{title:"Record — Profit Pilot"},{name:"description",content:"Every pick. Graded. Nothing deleted."},{property:"og:title",content:"Record — Profit Pilot"},{property:"og:description",content:"Every pick. Graded. Nothing deleted."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}),
+ head: () => ({meta:[{title:"Black Box — The Aviator — Profit Pilot"},{name:"description",content:"Every pick. Graded. Nothing deleted."},{property:"og:title",content:"Black Box — The Aviator — Profit Pilot"},{property:"og:description",content:"Every pick. Graded. Nothing deleted."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}),
  component:Content,
- errorComponent: ({error}) => <Page eyebrow="Record" title="Every pick. Graded. Nothing deleted."><ErrorBox error={error}/></Page>,
+ errorComponent: ({error}) => <Page eyebrow="Black Box" title="Black Box"><ErrorBox error={error}/></Page>,
 });
 export function summarize(rows: Row[]) {
   const w = rows.filter((r) => r.Result === "WIN").length;
