@@ -11,9 +11,9 @@ const num=v=>{const n=parseFloat(String(v??"").replace(/[%,+]/g,"").replace("−
 const pct=v=>{const n=num(v);return n==null?null:(n>1?n/100:n)};
 const odds=v=>{const n=num(v);return n==null?"—":(n>0?"+":"−")+Math.abs(Math.round(n))};
 const esc=s=>String(s??"").replace(/\bClaude\b/gi,"Model A").replace(/\bGemini\b/gi,"Model B").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const flightLabel=s=>esc(s).replace(/\bFloor[ -]Stack\b/gi,"Autopilot").replace(/\b(?:Outlier Lotto|Data-Backed Lotto|Lotto)\b/gi,"Long Haul");
-const tierLabel=s=>/floor[ -]stack/i.test(s||"")?`${flightLabel(s)}<small class="aviation-subtitle">floor stack</small>`:flightLabel(s);
-const resultLabel=s=>({WIN:"✅ Landed",LOSS:"❌",VOID:"VOID",PENDING:"🛫 In flight"}[String(s||"").toUpperCase()]||esc(s));
+const flightLabel=s=>esc(s).replace(/\b(?:Outlier Lotto|Data-Backed Lotto|Lotto)\b/gi,"Lotto");
+const tierLabel=s=>flightLabel(s);
+const resultLabel=s=>({WIN:"✅ Win",LOSS:"❌",VOID:"VOID",PENDING:"Pending"}[String(s||"").toUpperCase()]||esc(s));
 const mk=m=>MK[m]||m;
 const gid=(d,g)=>"g-"+String(d).replace(/-/g,"")+"-"+String(g).replace("@","-");
 const fmtDay=d=>{const x=new Date(d+"T12:00:00");return isNaN(x)?d:x.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})};
@@ -63,19 +63,19 @@ function vBoard(){const d=day();const season=agg(recRows().filter(r=>r.role==="S
  <p class="lede">The model prices every prop itself, then compares it with the sportsbook's price after removing the book's cut. Its picks also have to pass a sharp check against the sharpest markets. Tap a game to open the prop analyzer. Every pick gets graded tomorrow, wins and losses.</p>${stamp()}</section>
  <section class="chips4">
   <button class="sum lead" data-go="record"><span class="lab">Model picks · season</span><span class="v">${rec(season)}</span><span class="s">${season.n?units(season.u)+" · "+(season.hit*100).toFixed(1)+"% hit":"Grading starts tomorrow morning"}</span></button>
-  <button class="sum" data-jump="${picks.length?"picks":d.rows.some(r=>r.Type==="Gem")?"outliers":"games"}"><span class="lab">Flight Plan</span><span class="v">${picks.length}</span><span class="s">${picks.filter(r=>sharpOf(r)==="B").length?picks.filter(r=>sharpOf(r)==="B").length+" sharp-backed · ":""}across ${d.games.length} game${d.games.length===1?"":"s"}</span></button>
+  <button class="sum" data-jump="${picks.length?"picks":d.rows.some(r=>r.Type==="Gem")?"outliers":"games"}"><span class="lab">Model Picks</span><span class="v">${picks.length}</span><span class="s">${picks.filter(r=>sharpOf(r)==="B").length?picks.filter(r=>sharpOf(r)==="B").length+" sharp-backed · ":""}across ${d.games.length} game${d.games.length===1?"":"s"}</span></button>
   ${best?`<button class="sum" data-go="${gid(d.date,best.Game)}"><span class="lab">Biggest edge</span><span class="v">+${num(best["Edge %"]).toFixed(1)}%</span><span class="s">${esc(best.Player)} ${sideShort(best.Side)}${esc(best.Line)} ${esc(mk(best.Market))}</span></button>`:""}
   <button class="sum" data-go="edges"><span class="lab">Props priced</span><span class="v">${d.rows.length}</span><span class="s">sorted by edge on the Edges page</span></button>
  </section>
  ${outliers(d)}
- ${picks.length?`<section id="picks" class="section-stack"><div class="day"><h2>Flight Plan</h2><span>${picks.length} straight${picks.length===1?"":"s"}</span></div><div class="picks">${picks.map((r,i)=>pickCard(r,i)).join("")}</div></section>`:""}
+ ${picks.length?`<section id="picks" class="section-stack"><div class="day"><h2>Model Picks</h2><span>${picks.length} straight${picks.length===1?"":"s"}</span></div><div class="picks">${picks.map((r,i)=>pickCard(r,i)).join("")}</div></section>`:""}
  ${d.games.length?`<section id="games" class="section-stack"><div class="day"><h2>${esc(fmtDay(d.date))}</h2><span>${d.games.length} games</span></div><div class="games">${d.games.map(g=>gameCard(g,d.date)).join("")}</div></section>`:""}
  ${more.length?`<details class="more-board"><summary>More from the board <span>${more.length} leans / passes</span></summary><div class="section-stack">${more.map(row).join("")}</div></details>`:""}
  ${d.tickets.length?`<section class="section-stack"><div class="day"><h2>Tickets</h2><span>lottos are lottos · small stakes</span></div><div class="tix">${orderTickets(d.tickets).map(ticket).join("")}</div></section>`:""}`}
 
 function outliers(d){const available=categories.filter(c=>d.rows.some(r=>r.Type==="Gem"&&categoryOf(r)===c.key));if(!available.length)return "";
  const selected=available.find(c=>c.key===S.oc)||available[0];const gems=groupGems(d.rows,selected.key,S.os);const parlays=categoryTickets(d.tickets,selected.key,S.os);
- return `<section id="outliers" class="section-stack"><div class="day"><h2>Flight Plan</h2><span>${d.rows.filter(r=>r.Type==="Gem").length} model spots</span></div>
+ return `<section id="outliers" class="section-stack"><div class="day"><h2>Model Picks</h2><span>${d.rows.filter(r=>r.Type==="Gem").length} model spots</span></div>
  <div class="category-tabs" role="group" aria-label="Outlier category">${available.map(c=>`<button class="f" data-oc="${c.key}" aria-pressed="${selected.key===c.key}">${c.label}</button>`).join("")}</div>
  <div class="filters" role="group" aria-label="Outlier model">${["All","Model A","Model B"].map(s=>`<button class="f" data-os="${s}" aria-pressed="${S.os===s}">${s}</button>`).join("")}</div>
  <div class="outlier-grid">${gems.map(gemCard).join("")||'<p class="note">No outliers from this model in this category.</p>'}</div>
@@ -125,7 +125,7 @@ function vGame(){const d=day();const g=d&&d.games.find(x=>gid(d.date,x.Game)===S
  ${g.Note?`<p class="lede">${esc(g.Note)}</p>`:""}${breakdown(g)}
  <section style="display:grid;gap:14px"><div class="filters">
   <button class="f" data-gf="all" aria-pressed="${S.gf==="all"}">Every prop</button><button class="f" data-gf="pos" aria-pressed="${S.gf==="pos"}">Positive edge</button><button class="f" data-gf="picks" aria-pressed="${S.gf==="picks"}">Model picks</button></div>
- ${order.length?order.map(m=>`<div class="mkt" id="m-${esc(m.replace(/[^A-Za-z0-9]/g,""))}"><h3>${/^(First Basket|FBS|First TD)$/i.test(m)?`Takeoff Sheet<small class="aviation-subtitle">${/TD/i.test(m)?"First TD":"First Basket"}</small>`:esc(mk(m))}<span>${groups[m].length}</span></h3>${groups[m].map(row).join("")}</div>`).join(""):'<div class="empty">Nothing matches that filter in this game.</div>'}
+ ${order.length?order.map(m=>`<div class="mkt" id="m-${esc(m.replace(/[^A-Za-z0-9]/g,""))}"><h3>${/^(First Basket|FBS|First TD)$/i.test(m)?(/TD/i.test(m)?"First TD":"First Basket (FBS)"):esc(mk(m))}<span>${groups[m].length}</span></h3>${groups[m].map(row).join("")}</div>`).join(""):'<div class="empty">Nothing matches that filter in this game.</div>'}
  </section>
  <p class="note">Tap a prop to see the projection against the line and how often the model thinks it clears. The book's cut is already removed from its number, so the two bars compare like for like.</p>`}
 function row(r){const us=pct(r["Our %"]);const n=us!=null?Math.round(us*50):null;
@@ -156,7 +156,7 @@ function vRecord(){const rs=recRows();const st=rs.filter(r=>r.role==="STRAIGHT")
  const sets={picks:["Model picks",st],e3:["Picks · 3%+ edge",st.filter(r=>r.ev!=null&&r.ev>=3)]};
  let list=sets[S.rf][1];const mks=["All",...new Set(list.map(r=>r.Market))].sort((a,b)=>a==="All"?-1:b==="All"?1:a<b?-1:1);
  if(S.rmk!=="All")list=list.filter(r=>r.Market===S.rmk);list=[...list].sort((a,b)=>a.Date<b.Date?1:-1);
- return `<section class="intro"><span class="lab">${S.sport} Black Box</span><h1>Black Box</h1>
+ return `<section class="intro"><span class="lab">${S.sport} Receipts</span><h1>Receipts</h1>
  <p class="lede">Only picks that clear the full model AND the sharp-money check count here. The record starts Oct 22, 2026. Every pick is graded against the price posted before the game, using the official box score. Losses stay on the record.</p>${stamp()}</section>
  <section style="display:grid;gap:10px"><span class="lab">Tap a tile to filter the list</span><div class="tiles">${Object.entries(sets).map(([k,[l,r]])=>{const a=agg(r);return `<button class="tile" data-rf="${k}" aria-pressed="${S.rf===k}"><span class="lab">${l}</span><span class="big">${rec(a)}</span><span class="s">${a.n?`${(a.hit*100).toFixed(1)}% · <span class="${a.u>=0?"posc":"negc"}">${units(a.u)}</span>`:"no graded picks yet"}</span></button>`}).join("")}</div></section>
  ${rs.length?`<section>${chart(st)}</section>
@@ -165,7 +165,7 @@ function vRecord(){const rs=recRows();const st=rs.filter(r=>r.role==="STRAIGHT")
  <div class="tw"><table><thead><tr><th>Date</th><th>Player</th><th>Bet</th><th>Price</th><th>Model %</th><th>Actual</th><th>Result</th><th>Units</th></tr></thead><tbody>
  ${list.slice(0,S.shown).map(r=>`<tr><td>${esc(r.Date)}</td><td>${esc(r.Player)}<br><span class="lab">${esc(r.Game)}</span></td><td>${esc(r.Side)} ${esc(r.Line)} ${esc(mk(r.Market))}</td><td class="n">${odds(r.price)}</td><td class="n">${r.p!=null?(r.p*100).toFixed(0)+"%":"—"}</td><td class="n">${esc(r.Actual)}</td><td><span class="res ${r.Result[0]}">${resultLabel(r.Result)}</span></td><td class="n ${r.u>=0?"posc":"negc"}">${r.u>=0?"+":""}${r.u.toFixed(2)}</td></tr>`).join("")}
  </tbody></table></div>${list.length>S.shown?`<button class="cta" id="more" style="justify-self:center">Show ${Math.min(60,list.length-S.shown)} more</button>`:""}</section>`
- :`<section class="empty"><span>${sharpNote?"The sharp-backed record starts with tonight's picks. Check back tomorrow morning.":`${S.sport} grading starts after the first board. Check back tomorrow morning.`}</span>${S.sport==="NBA"?'<button class="cta" data-sp="NFL">See the NFL Black Box →</button>':""}</section>`}`}
+ :`<section class="empty"><span>${sharpNote?"The sharp-backed record starts with tonight's picks. Check back tomorrow morning.":`${S.sport} grading starts after the first board. Check back tomorrow morning.`}</span>${S.sport==="NBA"?'<button class="cta" data-sp="NFL">See the NFL Receipts →</button>':""}</section>`}`}
 function chart(st){st=[...st].sort((a,b)=>a.Date<b.Date?-1:1);if(st.length<3)return"";let c=0;const pts=st.map(r=>c+=r.u);
  const W=800,H=190,L=40,R=12,T=14,B=26,mn=Math.min(0,...pts),mx=Math.max(0,...pts);
  const x=i=>L+(i/(pts.length-1))*(W-L-R),y=v=>T+(mx-v)/((mx-mn)||1)*(H-T-B);
@@ -182,7 +182,7 @@ function vReads(){const ws=wList();const done=ws.filter(w=>pmRes(w["Post-mortem"
  return `<section class="intro"><span class="lab">${S.sport} breakdowns</span><h1>The why behind every main pick</h1>
  <p class="lede">The model's top picks each get a full write-up before the game: the player's role, the matchup, the game script, why the market looks off, what the sharp money is doing, and how it loses. After the game, the write-up gets graded too: was the reasoning right, not just the result.</p>${stamp()}</section>
  ${done.length?`<section class="chips4"><div class="sum lead"><span class="lab">Written-up picks</span><span class="v">${a.w}-${a.l}${a.p?"-"+a.p:""}</span><span class="s">graded with a post-mortem</span></div></section>`:""}
- <section class="wl">${ws.map(w=>{const res=pmRes(w["Post-mortem"]);return `<button class="wcard" data-go="${wid(w)}"><div class="wtop"><span class="lab">${esc(fmtDay(w.Date))} · ${esc(String(w.Game).replace("@"," @ "))}</span>${res?`<span class="res ${res[0]}">${resultLabel(res)}</span>`:'<span class="tag pos">🛫 In flight</span>'}</div>
+ <section class="wl">${ws.map(w=>{const res=pmRes(w["Post-mortem"]);return `<button class="wcard" data-go="${wid(w)}"><div class="wtop"><span class="lab">${esc(fmtDay(w.Date))} · ${esc(String(w.Game).replace("@"," @ "))}</span>${res?`<span class="res ${res[0]}">${resultLabel(res)}</span>`:'<span class="tag pos">Pending</span>'}</div>
   <h3>${esc(w.Headline)}</h3><span class="pmeta">${esc(w.Player)} · ${esc(w.Side)} ${esc(w.Line)} ${esc(mk(w.Market).toLowerCase())} · ${odds(w.Price)} at ${esc(w.Book)}</span></button>`}).join("")||`<div class="empty">The first ${S.sport} breakdowns land with the next board. ${S.sport==="NBA"?"NBA write-ups post by early afternoon on game days.":"NFL write-ups post Sunday morning and before the prime-time games."}</div>`}</section>`}
 function paras(body){return String(body||"").split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>{const m=p.match(/^([A-Z][A-Za-z' ]{2,28}):\s*([\s\S]*)$/);
  const lab=m?m[1]:null,txt=m?m[2]:p;const kill=lab&&/kill/i.test(lab);
