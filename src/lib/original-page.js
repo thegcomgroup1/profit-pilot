@@ -85,7 +85,7 @@ function gemCard(gem){const r=gem.row;const market=mk(r.Market).toLowerCase();co
  ${gem.entries.map(entry=>`<div class="gem-model"><span class="lab">${esc(sourceOf(entry))}</span><div class="pmeta">${odds(entry.Price)} at ${esc(entry.Book)}${pct(entry["Our %"])!=null?` · model ${(pct(entry["Our %"])*100).toFixed(1)}%`:""}</div><div class="tags">${flagsOf(entry).slice(1).map(f=>`<span class="tag">${tierLabel(f)}</span>`).join("")}</div>${entry.Thesis?`<p class="note thesis">${esc(entry.Thesis)}</p>`:""}</div>`).join("")}
  <div class="btnrow"><button class="cta" data-go="${gid(r.Date,r.Game)}">Open the game →</button></div></article>`}
 function breakdown(g){if(!g.Breakdown&&!g["Model B Thesis"])return "";const parts=splitBreakdown(g.Breakdown||"");
- return `<details class="game-breakdown"><summary>Breakdown <span class="chev">›</span></summary><div class="breakdown-body">${g.Breakdown?`<span class="lab">Model A</span>${parts.body?`<p class="thesis">${esc(parts.body)}</p>`:""}${parts.narrative.length?`<div class="narrative-strip">${parts.narrative.map(p=>{const match=p.match(/^(NARRATIVE|PRICED IN|OPPOSITE SCRIPT|VERDICT)\s*:?\s*(.*)$/i);return `<div><span class="lab">${esc(match?match[1]:"Narrative")}</span><span>${esc(match?match[2]:p)}</span></div>`}).join("")}</div>`:""}`:""}${g["Model B Thesis"]?`<h3>Second opinion</h3><span class="lab">Model B</span><p class="thesis">${esc(g["Model B Thesis"])}</p>`:""}</div></details>`}
+ return `<details class="game-breakdown"><summary>Breakdown <span class="chev">›</span></summary><div class="breakdown-body">${g.Breakdown?`<span class="lab">Model A</span>${parts.body?`<p class="thesis">${esc(parts.body)}</p>`:""}${parts.narrative.length?`<div class="narrative-strip">${parts.narrative.map(p=>{const match=p.match(/^(NARRATIVE|PRICED IN|OPPOSITE SCRIPT|VERDICT)\s*:?\s*(.*)$/i);return `<div><span class="lab">${esc(match?match[1]:"Narrative")}</span><span>${esc(match?match[2]:p)}</span></div>`}).join("")}</div>`:""}`:""}${g["Model B Thesis"]?`<h2 class="subheading">Second opinion</h2><span class="lab">Model B</span><p class="thesis">${esc(g["Model B Thesis"])}</p>`:""}</div></details>`}
 function pickCard(r,i){return `<article class="pcard"><div class="gtime"><span class="pnum">${String(i+1).padStart(2,"0")} · ${esc(r.Game.replace("@"," @ "))}</span><span class="pmeta">${esc(r["Tip ET"])} ET</span></div>
  <div class="pwho">${esc(r.Player)}</div><div class="pbet">${esc(r.Side.toUpperCase())} ${esc(r.Line)} <small>${esc(mk(r.Market).toLowerCase())}</small></div>
  <div class="pmeta">${odds(r.Price)} at ${esc(r.Book)}${r.Projection?` · model projection ${esc(r.Projection)}`:""}</div>${bars(r)}
@@ -125,7 +125,7 @@ function vGame(){const d=day();const g=d&&d.games.find(x=>gid(d.date,x.Game)===S
  ${g.Note?`<p class="lede">${esc(g.Note)}</p>`:""}${breakdown(g)}
  <section style="display:grid;gap:14px"><div class="filters">
   <button class="f" data-gf="all" aria-pressed="${S.gf==="all"}">Every prop</button><button class="f" data-gf="pos" aria-pressed="${S.gf==="pos"}">Positive edge</button><button class="f" data-gf="picks" aria-pressed="${S.gf==="picks"}">Model picks</button></div>
- ${order.length?order.map(m=>`<div class="mkt" id="m-${esc(m.replace(/[^A-Za-z0-9]/g,""))}"><h3>${/^(First Basket|FBS|First TD)$/i.test(m)?(/TD/i.test(m)?"First TD":"First Basket (FBS)"):esc(mk(m))}<span>${groups[m].length}</span></h3>${groups[m].map(row).join("")}</div>`).join(""):'<div class="empty">Nothing matches that filter in this game.</div>'}
+ ${order.length?order.map(m=>`<div class="mkt" id="m-${esc(m.replace(/[^A-Za-z0-9]/g,""))}"><h2 class="market-heading">${/^(First Basket|FBS|First TD)$/i.test(m)?(/TD/i.test(m)?"First TD":"First Basket (FBS)"):esc(mk(m))}<span>${groups[m].length}</span></h2>${groups[m].map(row).join("")}</div>`).join(""):'<div class="empty">Nothing matches that filter in this game.</div>'}
  </section>
  <p class="note">Tap a prop to see the projection against the line and how often the model thinks it clears. The book's cut is already removed from its number, so the two bars compare like for like.</p>`}
 function row(r){const us=pct(r["Our %"]);const n=us!=null?Math.round(us*50):null;
@@ -145,7 +145,7 @@ function vEdges(){const d=day();if(!d)return vBoard();
  rows.sort((a,b)=>num(b["Edge %"])-num(a["Edge %"]));
  return `<section class="intro"><span class="lab">${S.sport} · ${esc(fmtDay(d.date))}</span><h1>Where the model disagrees with the book</h1>
  <p class="lede">Every prop the model priced today, biggest edge first. A big gap is a question worth asking. When the model disagrees with the market by a lot, it's usually the model that's missing something, so those numbers get pulled back toward the market before ranking.</p>${stamp()}</section>
- <section style="display:grid;gap:12px"><div class="filters">
+ <section style="display:grid;gap:12px"><h2 class="lab">Player props ranked by model edge</h2><div class="filters">
   ${[["pos","Positive edge"],["sharp","Sharp-backed"],["all","Everything"],["under","Unders"],["over","Overs"]].map(([k,l])=>`<button class="f" data-ef="${k}" aria-pressed="${S.ef===k}">${l}</button>`).join("")}
   <input class="search" id="q" type="search" placeholder="Search a player or team" value="${esc(S.q)}" aria-label="Search a player or team"></div>
  <div class="filters">${mks.map(m=>`<button class="f" data-emk="${esc(m)}" aria-pressed="${S.emk===m}">${esc(m==="All"?"All markets":mk(m))}</button>`).join("")}</div>
@@ -156,9 +156,9 @@ function vRecord(){const rs=recRows();const st=rs.filter(r=>r.role==="STRAIGHT")
  const sets={picks:["Model picks",st],e3:["Picks · 3%+ edge",st.filter(r=>r.ev!=null&&r.ev>=3)]};
  let list=sets[S.rf][1];const mks=["All",...new Set(list.map(r=>r.Market))].sort((a,b)=>a==="All"?-1:b==="All"?1:a<b?-1:1);
  if(S.rmk!=="All")list=list.filter(r=>r.Market===S.rmk);list=[...list].sort((a,b)=>a.Date<b.Date?1:-1);
- return `<section class="intro"><span class="lab">${S.sport} Receipts</span><h1>Receipts</h1>
+ return `<section class="intro"><span class="lab">${S.sport} Receipts</span><h1>Receipts: ${S.sport} pick results</h1>
  <p class="lede">Only picks that clear the full model AND the sharp-money check count here. The record starts Oct 22, 2026. Every pick is graded against the price posted before the game, using the official box score. Losses stay on the record.</p>${stamp()}</section>
- <section style="display:grid;gap:10px"><span class="lab">Tap a tile to filter the list</span><div class="tiles">${Object.entries(sets).map(([k,[l,r]])=>{const a=agg(r);return `<button class="tile" data-rf="${k}" aria-pressed="${S.rf===k}"><span class="lab">${l}</span><span class="big">${rec(a)}</span><span class="s">${a.n?`${(a.hit*100).toFixed(1)}% · <span class="${a.u>=0?"posc":"negc"}">${units(a.u)}</span>`:"no graded picks yet"}</span></button>`}).join("")}</div></section>
+ <section style="display:grid;gap:10px"><h2 class="lab">Model pick results by edge</h2><div class="tiles">${Object.entries(sets).map(([k,[l,r]])=>{const a=agg(r);return `<button class="tile" data-rf="${k}" aria-pressed="${S.rf===k}"><span class="lab">${l}</span><span class="big">${rec(a)}</span><span class="s">${a.n?`${(a.hit*100).toFixed(1)}% · <span class="${a.u>=0?"posc":"negc"}">${units(a.u)}</span>`:"no graded picks yet"}</span></button>`}).join("")}</div></section>
  ${rs.length?`<section>${chart(st)}</section>
  <section style="display:grid;gap:10px"><div class="day"><h2>Showing ${sets[S.rf][0].toLowerCase()}</h2><span>${list.length} graded</span></div>
  <div class="filters">${mks.map(m=>`<button class="f" data-rmk="${esc(m)}" aria-pressed="${S.rmk===m}">${esc(m==="All"?"All markets":mk(m))}</button>`).join("")}</div>
@@ -170,7 +170,7 @@ function chart(st){st=[...st].sort((a,b)=>a.Date<b.Date?-1:1);if(st.length<3)ret
  const W=800,H=190,L=40,R=12,T=14,B=26,mn=Math.min(0,...pts),mx=Math.max(0,...pts);
  const x=i=>L+(i/(pts.length-1))*(W-L-R),y=v=>T+(mx-v)/((mx-mn)||1)*(H-T-B);
  const d=pts.map((v,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");const ticks=[...new Set([mn,0,mx].map(v=>+v.toFixed(1)))];
- return `<div class="chart"><span class="lab">Units on the model's picks, one pick at a time</span><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Running units on the model's picks">
+ return `<div class="chart"><h2 class="lab">Units on the model's picks, one pick at a time</h2><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Running units on the model's picks">
  ${ticks.map(v=>`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--rule)"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end" font-size="11" font-family="IBM Plex Mono,monospace" fill="var(--soft)">${v>0?"+":""}${v.toFixed(1)}</text>`).join("")}
  <path d="${d} L${x(pts.length-1)},${y(0)} L${x(0)},${y(0)} Z" fill="var(--mint)" opacity=".12"/><path d="${d}" fill="none" stroke="var(--mint)" stroke-width="2.5" stroke-linejoin="round"/>
  <circle cx="${x(pts.length-1)}" cy="${y(pts[pts.length-1])}" r="5" fill="var(--mint)"/>
@@ -183,10 +183,10 @@ function vReads(){const ws=wList();const done=ws.filter(w=>pmRes(w["Post-mortem"
  <p class="lede">The model's top picks each get a full write-up before the game: the player's role, the matchup, the game script, why the market looks off, what the sharp money is doing, and how it loses. After the game, the write-up gets graded too: was the reasoning right, not just the result.</p>${stamp()}</section>
  ${done.length?`<section class="chips4"><div class="sum lead"><span class="lab">Written-up picks</span><span class="v">${a.w}-${a.l}${a.p?"-"+a.p:""}</span><span class="s">graded with a post-mortem</span></div></section>`:""}
  <section class="wl">${ws.map(w=>{const res=pmRes(w["Post-mortem"]);return `<button class="wcard" data-go="${wid(w)}"><div class="wtop"><span class="lab">${esc(fmtDay(w.Date))} · ${esc(String(w.Game).replace("@"," @ "))}</span>${res?`<span class="res ${res[0]}">${resultLabel(res)}</span>`:'<span class="tag pos">Pending</span>'}</div>
-  <h3>${esc(w.Headline)}</h3><span class="pmeta">${esc(w.Player)} · ${esc(w.Side)} ${esc(w.Line)} ${esc(mk(w.Market).toLowerCase())} · ${odds(w.Price)} at ${esc(w.Book)}</span></button>`}).join("")||`<div class="empty">The first ${S.sport} breakdowns land with the next board. ${S.sport==="NBA"?"NBA write-ups post by early afternoon on game days.":"NFL write-ups post Sunday morning and before the prime-time games."}</div>`}</section>`}
+  <h2>${esc(w.Headline)}</h2><span class="pmeta">${esc(w.Player)} · ${esc(w.Side)} ${esc(w.Line)} ${esc(mk(w.Market).toLowerCase())} · ${odds(w.Price)} at ${esc(w.Book)}</span></button>`}).join("")||`<div class="empty">The first ${S.sport} breakdowns land with the next board. ${S.sport==="NBA"?"NBA write-ups post by early afternoon on game days.":"NFL write-ups post Sunday morning and before the prime-time games."}</div>`}</section>`}
 function paras(body){return String(body||"").split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>{const m=p.match(/^([A-Z][A-Za-z' ]{2,28}):\s*([\s\S]*)$/);
  const lab=m?m[1]:null,txt=m?m[2]:p;const kill=lab&&/kill/i.test(lab);
- return `<div class="sec${kill?" kill":""}">${lab?`<span class="lab">${esc(lab)}</span>`:""}${txt.split(/\n/).map(t=>`<p>${esc(t)}</p>`).join("")}</div>`}).join("")}
+ return `<div class="sec${kill?" kill":""}">${lab?`<h2 class="lab">${esc(lab)}</h2>`:""}${txt.split(/\n/).map(t=>`<p>${esc(t)}</p>`).join("")}</div>`}).join("")}
 function vWriteup(){const w=(S.data.writeups||[]).find(x=>wid(x)===S.id);
  if(!w)return `<section class="empty"><span>That breakdown isn't here. It may still be loading, or the link is off by a letter.</span><button class="cta" data-go="reads">← All breakdowns</button></section>`;
  const us=pct(w["Our %"]),bk=pct(w["Book %"]);const n=us!=null?Math.round(us*50):null;const res=pmRes(w["Post-mortem"]);
@@ -194,22 +194,22 @@ function vWriteup(){const w=(S.data.writeups||[]).find(x=>wid(x)===S.id);
  return `<section class="intro"><button class="back" data-go="reads">← All breakdowns</button>
  <span class="lab">${esc(w.Sport||S.sport)} · ${esc(fmtDay(w.Date))} · ${esc(String(w.Game).replace("@"," @ "))}</span><h1>${esc(w.Headline)}</h1></section>
  <article class="art">
- <div class="betbox"><span class="lab">The bet</span><div class="pwho">${esc(w.Player)}</div><div class="pbet">${esc(String(w.Side).toUpperCase())} ${esc(w.Line)} <small>${esc(mk(w.Market).toLowerCase())}</small></div>
+ <div class="betbox"><h2 class="lab">The bet</h2><div class="pwho">${esc(w.Player)}</div><div class="pbet">${esc(String(w.Side).toUpperCase())} ${esc(w.Line)} <small>${esc(mk(w.Market).toLowerCase())}</small></div>
   <div class="pmeta">${odds(w.Price)} at ${esc(w.Book)}</div>${sharpTag(w)?`<div class="tags">${sharpTag(w)}</div>`:""}${bars(w)}
   ${n!=null?`<div class="sim"><span class="lab">50 simulated games</span><div class="ticks" aria-hidden="true">${Array.from({length:50},(_,i)=>`<i class="${i<n?"h":""}"></i>`).join("")}</div><span class="simcap">About ${n} of 50 · break-even at ${odds(num(w.Price))} is ${Math.round(be(num(w.Price))*50)} of 50</span></div>`:""}</div>
- ${res?`<div class="pm ${res[0]}"><span class="lab">After the game · <span class="res big ${res[0]}">${resultLabel(res)}</span></span><p>${esc(pm)}</p></div>`:""}
+ ${res?`<div class="pm ${res[0]}"><h2 class="lab">After the game · <span class="res big ${res[0]}">${resultLabel(res)}</span></h2><p>${esc(pm)}</p></div>`:""}
  ${paras(w.Body)}
  <div class="btnrow"><button class="cta" id="share">Copy link to share</button><a class="cta" href="https://x.com/TeejTradez" target="_blank" rel="noopener" style="text-decoration:none">Follow @TeejTradez</a></div>
  <p class="note">Model output, not betting advice. All odds are estimated. Prices move, so shop your number. 21+. 1-800-GAMBLER.</p></article>`}
 
 function vMethod(){return `<section class="intro"><span class="lab">How it works</span><h1>Price it. Compare it. Grade it.</h1></section>
  <section class="prose">
- <div><span class="lab">01 · Its own number</span><p>For every player the model projects minutes and role first, then production per minute, adjusted for the matchup, the game total and injuries. That gives a range of outcomes, not just an average, so it knows how often a player really clears a line.</p></div>
- <div><span class="lab">02 · Against the book</span><p>Sportsbooks build their cut into every price. The model removes it to get the book's real number, using the least flattering method, then puts its own number beside it. A few points of difference is an edge. Less than that, it passes.</p></div>
- <div><span class="lab">03 · Humble about big gaps</span><p>When the model disagrees with the market by a lot, it's usually the one missing something. Big gaps get pulled back toward the market, and any huge edge needs a nameable reason, like an injury or a role change.</p></div>
- <div><span class="lab">04 · The sharp check</span><p>A good number isn't enough. Before anything becomes a pick, the model checks what the sharpest markets are doing: betting exchanges where pros trade against each other, and the sharpest books. If big money is on the other side, the pick is dropped, however good the model's number looks. Picks marked "Sharp-backed" have the sharp market on their side.</p></div>
- <div><span class="lab">05 · Graded every morning</span><p>Every pick is graded against the official box score at the price posted before the game, and every pick stays on the record. When a group of picks misses more than the model predicted, the model gets changed, publicly.</p></div>
- <div><span class="lab">Reading "57% vs 53%"</span><p>The model thinks the bet wins about 57 times in 100. The book's price, with its cut removed, says 53. At standard odds you need 52.4% to break even. Nobody hits 70% over a season. Anyone selling that is selling something.</p></div>
+ <div><h2 class="lab">01 · Its own number</h2><p>For every player the model projects minutes and role first, then production per minute, adjusted for the matchup, the game total and injuries. That gives a range of outcomes, not just an average, so it knows how often a player really clears a line.</p></div>
+ <div><h2 class="lab">02 · Against the book</h2><p>Sportsbooks build their cut into every price. The model removes it to get the book's real number, using the least flattering method, then puts its own number beside it. A few points of difference is an edge. Less than that, it passes.</p></div>
+ <div><h2 class="lab">03 · Humble about big gaps</h2><p>When the model disagrees with the market by a lot, it's usually the one missing something. Big gaps get pulled back toward the market, and any huge edge needs a nameable reason, like an injury or a role change.</p></div>
+ <div><h2 class="lab">04 · The sharp check</h2><p>A good number isn't enough. Before anything becomes a pick, the model checks what the sharpest markets are doing: betting exchanges where pros trade against each other, and the sharpest books. If big money is on the other side, the pick is dropped, however good the model's number looks. Picks marked "Sharp-backed" have the sharp market on their side.</p></div>
+ <div><h2 class="lab">05 · Graded every morning</h2><p>Every pick is graded against the official box score at the price posted before the game, and every pick stays on the record. When a group of picks misses more than the model predicted, the model gets changed, publicly.</p></div>
+ <div><h2 class="lab">Reading "57% vs 53%"</h2><p>The model thinks the bet wins about 57 times in 100. The book's price, with its cut removed, says 53. At standard odds you need 52.4% to break even. Nobody hits 70% over a season. Anyone selling that is selling something.</p></div>
  <div class="btnrow"><a class="cta solid" href="https://teejtradez.substack.com" target="_blank" rel="noopener" style="text-decoration:none">Get the Free Money Sheet</a><a class="cta" href="https://x.com/TeejTradez" target="_blank" rel="noopener" style="text-decoration:none">Follow @TeejTradez</a></div>
  </section>`}
 

@@ -13,3 +13,5 @@
 - [x] Verify new content from the real sheet — the live board now displays Gem rows, both model lanes, and category tickets.
 # SEO findings
 - [x] Add and verify a router-derived sitemap and robots reference for public pages (13 destinations; publication pending).
+- [x] Correct descriptive headings and heading hierarchy without changing the layout; verified live pages and 375px Receipts view.
+- [x] Clarify shared-preview descriptions and dynamic page titles; verified real game and writeup flows, 14 tests passed; publication and rescan pending.
