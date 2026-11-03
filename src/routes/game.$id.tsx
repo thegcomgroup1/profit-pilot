@@ -6,7 +6,12 @@ export const Route = createFileRoute("/game/$id")({
   staticData: { sitemap: false },
  validateSearch: sportSearch,
  loader: ({context}) => context.queryClient.ensureQueryData(siteQuery),
- head: () => ({meta:[{title:"Game props — The Aviator — Profit Pilot"},{name:"description",content:"Player prop analyzer"},{property:"og:title",content:"Game props — The Aviator — Profit Pilot"},{property:"og:description",content:"Player prop analyzer"},{property:"og:type",content:"article"},{name:"twitter:card",content:"summary_large_image"}]}),
+ head: ({ params }) => {
+   const matchup = params.id.replace("@", " at ");
+   const title = `${matchup} player props — The Aviator — Profit Pilot`;
+   const description = `Analyze ${matchup} player props with model projections, estimated sportsbook prices, model edges, and available game breakdowns. Filter by market or model picks.`;
+   return { meta: [{ title }, { name: "description", content: description }, { property: "og:title", content: title }, { property: "og:description", content: description }, { property: "og:type", content: "article" }, { name: "twitter:card", content: "summary_large_image" }] };
+ },
  component:Game,
  errorComponent: ({error}) => <Page eyebrow="Game props" title="Player prop analyzer"><ErrorBox error={error}/></Page>,
 });

@@ -6,7 +6,7 @@ export const Route = createFileRoute("/record")({
   staticData: { sitemap: true },
  validateSearch: sportSearch,
  loader: ({context}) => context.queryClient.ensureQueryData(siteQuery),
- head: () => ({meta:[{title:"Receipts — The Aviator — Profit Pilot"},{name:"description",content:"Every pick. Graded. Nothing deleted."},{property:"og:title",content:"Receipts — The Aviator — Profit Pilot"},{property:"og:description",content:"Every pick. Graded. Nothing deleted."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}),
+ head: () => ({meta:[{title:"Receipts — The Aviator — Profit Pilot"},{name:"description",content:"Review graded NBA and NFL model picks, wins, losses, and units since October 22, 2026. Only picks passing the model and sharp-money checks count."},{property:"og:title",content:"Receipts — The Aviator — Profit Pilot"},{property:"og:description",content:"Review graded NBA and NFL model picks, wins, losses, and units since October 22, 2026. Only picks passing the model and sharp-money checks count."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}),
  component:Content,
  errorComponent: ({error}) => <Page eyebrow="Receipts" title="Every pick. Graded. Nothing deleted."><ErrorBox error={error}/></Page>,
 });

@@ -6,7 +6,7 @@ export const Route = createFileRoute("/edges")({
   staticData: { sitemap: true },
  validateSearch: sportSearch,
  loader: ({context}) => context.queryClient.ensureQueryData(siteQuery),
- head: () => ({meta:[{title:"Edges — The Aviator — Profit Pilot"},{name:"description",content:"Where the model disagrees with the book"},{property:"og:title",content:"Edges — The Aviator — Profit Pilot"},{property:"og:description",content:"Where the model disagrees with the book"},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}),
+ head: () => ({meta:[{title:"Edges — The Aviator — Profit Pilot"},{name:"description",content:"Compare player props by model edge, with filters for sharp-backed picks, market, player, and team. See model probabilities beside estimated sportsbook prices."},{property:"og:title",content:"Edges — The Aviator — Profit Pilot"},{property:"og:description",content:"Compare player props by model edge, with filters for sharp-backed picks, market, player, and team. See model probabilities beside estimated sportsbook prices."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}),
  component:Content,
  errorComponent: ({error}) => <Page eyebrow="Edges" title="Where the model disagrees with the book"><ErrorBox error={error}/></Page>,
 });

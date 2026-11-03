@@ -107,7 +107,7 @@ h3{font-size:20px;line-height:1.15}
 .wl{display:grid;gap:10px}
 .wcard{all:unset;cursor:pointer;background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px;display:grid;gap:6px;min-width:0}
 .wcard:hover{border-color:var(--mint)}
-.wcard h3{font-size:21px}
+.wcard h2{font-size:21px;line-height:1.15}
 .wtop{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .rlink{all:unset;cursor:pointer;font:600 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--mint);padding:6px 0}
 /* pick cards */
@@ -139,7 +139,8 @@ h3{font-size:20px;line-height:1.15}
 .search{flex:1 1 180px;min-width:0;font:500 14px var(--body);padding:9px 12px;border-radius:99px;border:1px solid var(--rule);background:var(--card);color:var(--ink)}
 /* analyzer rows */
 .mkt{display:grid;gap:8px}
-.mkt h3 span{font:500 12px var(--mono);color:var(--soft);margin-left:6px}
+.market-heading,.subheading{font-size:20px;line-height:1.15}
+.mkt h2 span{font:500 12px var(--mono);color:var(--soft);margin-left:6px}
 details.row{background:var(--card);border:1px solid var(--rule);border-radius:10px}
 details.row[open]{border-color:var(--mint)}
 details.row summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:12px 14px}
