@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as EdgesRouteImport } from './routes/edges'
 import { Route as RecordRouteImport } from './routes/record'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as GameIdRouteImport } from './routes/game.$id'
 import { Route as WhyIndexRouteImport } from './routes/why.index'
 import { Route as WhySlugRouteImport } from './routes/why.$slug'
@@ -37,6 +38,11 @@ const RecordRoute = RecordRouteImport.update({
   path: '/record',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GameIdRoute = GameIdRouteImport.update({
   id: '/game/$id',
   path: '/game/$id',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/edges': typeof EdgesRoute
   '/record': typeof RecordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/game/$id': typeof GameIdRoute
   '/why/$slug': typeof WhySlugRoute
   '/why/': typeof WhyIndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/edges': typeof EdgesRoute
   '/record': typeof RecordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/game/$id': typeof GameIdRoute
   '/why/$slug': typeof WhySlugRoute
   '/why': typeof WhyIndexRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/edges': typeof EdgesRoute
   '/record': typeof RecordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/game/$id': typeof GameIdRoute
   '/why/$slug': typeof WhySlugRoute
   '/why/': typeof WhyIndexRoute
@@ -84,16 +93,31 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/about' | '/edges' | '/record' | '/game/$id' | '/why/$slug' | '/why/'
+    | '/'
+    | '/about'
+    | '/edges'
+    | '/record'
+    | '/sitemap.xml'
+    | '/game/$id'
+    | '/why/$slug'
+    | '/why/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/about' | '/edges' | '/record' | '/game/$id' | '/why/$slug' | '/why'
+    | '/'
+    | '/about'
+    | '/edges'
+    | '/record'
+    | '/sitemap.xml'
+    | '/game/$id'
+    | '/why/$slug'
+    | '/why'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/edges'
     | '/record'
+    | '/sitemap.xml'
     | '/game/$id'
     | '/why/$slug'
     | '/why/'
@@ -104,6 +128,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   EdgesRoute: typeof EdgesRoute
   RecordRoute: typeof RecordRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GameIdRoute: typeof GameIdRoute
   WhySlugRoute: typeof WhySlugRoute
   WhyIndexRoute: typeof WhyIndexRoute
@@ -139,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/game/$id': {
       id: '/game/$id'
       path: '/game/$id'
@@ -168,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   EdgesRoute: EdgesRoute,
   RecordRoute: RecordRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   GameIdRoute: GameIdRoute,
   WhySlugRoute: WhySlugRoute,
   WhyIndexRoute: WhyIndexRoute,

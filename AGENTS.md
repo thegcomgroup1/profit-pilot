@@ -13,3 +13,5 @@
 - Preserve the supplied HTML's pure view templates through the React adapter in original-page; TanStack routes and shared controls handle navigation and interaction so the original presentation remains faithful without embedding a separate app.
 - Keep model/category selection, Gem deduplication, ticket ordering, and narrative parsing in browser-safe pure pickboard helpers so the templates and rule tests share one implementation.
 - Map aviation labels and result badges only at template rendering boundaries; preserve canonical sheet values and filter keys so rebrands cannot alter pick selection or grading.
+
+- Derive sitemap static URLs from explicit route staticData decisions and include durable public sheet writeups; omit expiring game views and unverified lastmod dates so discovery stays accurate.
