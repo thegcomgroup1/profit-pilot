@@ -3,6 +3,7 @@ import { OriginalPage } from "@/components/original-page";
 import { Page, ErrorBox } from "@/components/site";
 import { siteQuery, sportSearch, type Row } from "@/lib/sheet";
 export const Route = createFileRoute("/why/")({
+  staticData: { sitemap: true },
  validateSearch: sportSearch,
  loader: ({context}) => context.queryClient.ensureQueryData(siteQuery),
  head: () => ({meta:[{title:"Breakdowns — The Aviator — Profit Pilot"},{name:"description",content:"The why behind every main pick"},{property:"og:title",content:"Breakdowns — The Aviator — Profit Pilot"},{property:"og:description",content:"The why behind every main pick"},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}),

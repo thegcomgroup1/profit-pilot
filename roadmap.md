@@ -11,3 +11,5 @@
 - [x] Keep straights separate, collapse extra rows, and reorder tickets.
 - [x] Verify rule tests, real board/game flows, and temporary new-field fixtures on mobile/desktop.
 - [x] Verify new content from the real sheet — the live board now displays Gem rows, both model lanes, and category tickets.
+# SEO findings
+- [ ] Add and verify a router-derived sitemap and robots reference for public pages.

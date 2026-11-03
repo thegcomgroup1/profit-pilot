@@ -12,3 +12,5 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+Sitemap: https://profit-pilot-prediction-model.lovable.app/sitemap.xml

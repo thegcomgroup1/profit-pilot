@@ -3,6 +3,7 @@ import { OriginalPage } from "@/components/original-page";
 import { Page, ErrorBox } from "@/components/site";
 import { siteQuery, sportSearch, type Row } from "@/lib/sheet";
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
  validateSearch: sportSearch,
  loader: ({context}) => context.queryClient.ensureQueryData(siteQuery),
  head: () => ({meta:[{title:"Model Picks — The Aviator — Profit Pilot"},{name:"description",content:"Free NBA + NFL prop model. Every flight logged, every pick graded."},{property:"og:title",content:"Model Picks — The Aviator — Profit Pilot"},{property:"og:description",content:"Free NBA + NFL prop model. Every flight logged, every pick graded."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}),
